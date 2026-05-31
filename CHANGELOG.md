@@ -1,3 +1,9 @@
+## [1.6.2](https://github.com/fatihsolhan/prompts-chat-extension/compare/v1.6.1...v1.6.2) (2026-05-31)
+
+### 🐛 Bug Fixes
+
+* fetch full prompt content from detail endpoint after list API dropped content field ([bded6c9](https://github.com/fatihsolhan/prompts-chat-extension/commit/bded6c910f3dca73c5e9c77e305a7b93e415b7e1))
+
 ## [1.6.1](https://github.com/fatihsolhan/prompts-chat-extension/compare/v1.6.0...v1.6.1) (2026-03-20)
 
 ### 🐛 Bug Fixes
