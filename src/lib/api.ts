@@ -1,11 +1,15 @@
-import { ApiPrompt, Category, Prompt, PromptsResponse } from "./types";
+import { ApiPrompt, ApiPromptDetail, Category, Prompt, PromptsResponse } from "./types";
 
 const API_URL = "https://prompts.chat/prompts.json";
+const PROMPT_DETAIL_URL = (id: string) => `https://prompts.chat/api/prompts/${id}`;
 
 let cachedPrompts: Prompt[] | null = null;
 let cachedCategories: Category[] | null = null;
 let cacheTimestamp: number | null = null;
 const CACHE_DURATION = 5 * 60 * 1000;
+
+const cachedContent = new Map<string, { content: string; timestamp: number }>();
+const contentRequests = new Map<string, Promise<string | null>>();
 
 function mapApiPromptToPrompt(apiPrompt: ApiPrompt): Prompt {
   return {
@@ -13,7 +17,7 @@ function mapApiPromptToPrompt(apiPrompt: ApiPrompt): Prompt {
     title: apiPrompt.title,
     slug: apiPrompt.slug,
     description: apiPrompt.description || undefined,
-    content: apiPrompt.content || "",
+    content: apiPrompt.contentPreview || "",
     type: apiPrompt.type || "TEXT",
     structuredFormat: apiPrompt.structuredFormat || undefined,
     mediaUrl: apiPrompt.mediaUrl || undefined,
@@ -78,8 +82,44 @@ export async function fetchPrompts(): Promise<PromptsResponse> {
   };
 }
 
+async function requestPromptContent(id: string): Promise<string | null> {
+  const response = await fetch(PROMPT_DETAIL_URL(id));
+  if (!response.ok) {
+    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+  }
+  const data: ApiPromptDetail = await response.json();
+  const content = typeof data.content === "string" ? data.content : null;
+  if (content) {
+    cachedContent.set(id, { content, timestamp: Date.now() });
+  }
+  return content;
+}
+
+export async function fetchPromptContent(id: string): Promise<string | null> {
+  const cached = cachedContent.get(id);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.content;
+  }
+
+  const inFlight = contentRequests.get(id);
+  if (inFlight) return inFlight;
+
+  const request = requestPromptContent(id);
+  contentRequests.set(id, request);
+
+  try {
+    return await request;
+  } catch {
+    return null;
+  } finally {
+    contentRequests.delete(id);
+  }
+}
+
 export function invalidateCache(): void {
   cachedPrompts = null;
   cachedCategories = null;
   cacheTimestamp = null;
+  cachedContent.clear();
+  contentRequests.clear();
 }

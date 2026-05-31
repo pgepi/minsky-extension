@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useCopy } from "@/hooks/useCopy";
 import { analytics } from "@/lib/analytics";
+import { fetchPromptContent } from "@/lib/api";
 import { Prompt, Tag, TemplateVariable } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { applyTemplateVariables, hasTemplateVariables, parseTemplateVariables } from "@/lib/utils/prompts";
@@ -218,9 +219,12 @@ export function PromptDetailDialog({ prompt, open, onOpenChange }: PromptDetailD
   const { copy } = useCopy();
   const [isCopied, setIsCopied] = useState(false);
   const [variables, setVariables] = useState<TemplateVariable[]>([]);
-  const hasVars = prompt ? hasTemplateVariables(prompt.content) : false;
+  const [fullContent, setFullContent] = useState<string | null>(null);
 
-  const finalContent = hasVars && prompt ? applyTemplateVariables(prompt.content, variables) : (prompt?.content ?? "");
+  const baseContent = fullContent ?? prompt?.content ?? "";
+  const hasVars = hasTemplateVariables(baseContent);
+
+  const finalContent = hasVars ? applyTemplateVariables(baseContent, variables) : baseContent;
 
   const handleCopy = useCallback((): void => {
     if (!prompt) return;
@@ -240,18 +244,34 @@ export function PromptDetailDialog({ prompt, open, onOpenChange }: PromptDetailD
   }, [onOpenChange]);
 
   useEffect(() => {
-    if (prompt && hasVars) {
-      setVariables(parseTemplateVariables(prompt.content));
+    if (hasVars) {
+      setVariables(parseTemplateVariables(baseContent));
     } else {
       setVariables([]);
     }
-  }, [prompt, hasVars]);
+  }, [baseContent, hasVars]);
 
   useEffect(() => {
     if (!open) {
       setIsCopied(false);
     }
   }, [open]);
+
+  useEffect(() => {
+    if (!open || !prompt) return;
+
+    let cancelled = false;
+    setFullContent(null);
+    fetchPromptContent(prompt.id).then((content) => {
+      if (!cancelled && content) {
+        setFullContent(content);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, prompt?.id]);
 
   useEffect(() => {
     if (open && prompt) {
@@ -322,7 +342,7 @@ export function PromptDetailDialog({ prompt, open, onOpenChange }: PromptDetailD
           {prompt.mediaUrl && prompt.type === "AUDIO" && <AudioPlayer src={prompt.mediaUrl} />}
 
           <HighlightedContent
-            content={prompt.content}
+            content={baseContent}
             variables={variables}
             structuredFormat={prompt.structuredFormat}
             editable={hasVars}

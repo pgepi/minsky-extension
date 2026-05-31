@@ -3,7 +3,7 @@ export interface ApiPrompt {
   title: string;
   slug: string;
   description?: string | null;
-  content: string;
+  contentPreview?: string | null;
   type: PromptType;
   structuredFormat?: string | null;
   createdAt: string;
@@ -29,6 +29,10 @@ export interface ApiPrompt {
     slug: string;
     color: string;
   }>;
+}
+
+export interface ApiPromptDetail extends ApiPrompt {
+  content?: string | null;
 }
 
 export type PromptType = 'TEXT' | 'STRUCTURED' | 'IMAGE' | 'VIDEO' | 'AUDIO';
