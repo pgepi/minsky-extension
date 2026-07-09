@@ -1,6 +1,6 @@
 {
-  "name": "prompts-chat",
-  "description": "prompts.chat - AI-powered prompt library for ChatGPT, Claude, Gemini, and more",
+  "name": "minsky-extension",
+  "description": "Minsky - Biblioteca de Prompts da PGE-PI, com acesso rápido para ChatGPT, Claude, Gemini e mais",
   "private": false,
   "version": "1.0.2",
   "type": "module",
@@ -12,7 +12,7 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
-    "postinstall": "wxt prepare",
+    "postinstall": "sh scripts/apply-patches.sh && wxt prepare",
     "test": "vitest --watch=false",
     "test:run": "vitest run",
     "test:ui": "vitest --ui",
