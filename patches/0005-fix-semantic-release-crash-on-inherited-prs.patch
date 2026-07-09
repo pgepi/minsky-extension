@@ -1,0 +1,19 @@
+diff --git a/.releaserc.json b/.releaserc.json
+index d0d751d..71b1ad8 100644
+--- a/.releaserc.json
++++ b/.releaserc.json
+@@ -131,12 +131,8 @@
+     [
+       "@semantic-release/github",
+       {
+-        "assets": [
+-          {
+-            "path": "extension.zip",
+-            "label": "Extension Bundle"
+-          }
+-        ]
++        "successComment": false,
++        "failComment": false
+       }
+     ]
+   ]
