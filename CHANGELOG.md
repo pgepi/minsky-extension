@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/pgepi/minsky-extension/compare/v1.0.0...v1.0.1) (2026-07-09)
+
+### 🐛 Bug Fixes
+
+* **ci:** stop semantic-release crashing on inherited PR references ([8584c3c](https://github.com/pgepi/minsky-extension/commit/8584c3c1cc312aa1771493e2a2039d652e3e9da7)), closes [#12](https://github.com/pgepi/minsky-extension/issues/12)
+
 ## 1.0.0 (2026-07-09)
 
 ### ✨ Features
