@@ -1,0 +1,399 @@
+diff --git a/package.json b/package.json
+index b9d0044..5e2e3b6 100644
+--- a/package.json
++++ b/package.json
+@@ -12,7 +12,7 @@
+     "zip": "wxt zip",
+     "zip:firefox": "wxt zip -b firefox",
+     "compile": "tsc --noEmit",
+-    "postinstall": "wxt prepare",
++    "postinstall": "sh scripts/apply-patches.sh && wxt prepare",
+     "test": "vitest --watch=false",
+     "test:run": "vitest run",
+     "test:ui": "vitest --ui",
+diff --git a/scripts/apply-patches.sh b/scripts/apply-patches.sh
+new file mode 100755
+index 0000000..a6efcf9
+--- /dev/null
++++ b/scripts/apply-patches.sh
+@@ -0,0 +1,19 @@
++#!/bin/sh
++# Reapplies patches/*.patch to the working tree. Runs on every `yarn install`
++# (via postinstall) so local customizations survive an upstream sync/rebuild.
++# Uses `git apply` (not plain `patch`) because some patches touch binary
++# assets (icons/logos), which only git's diff format can represent.
++# Idempotent: skips a patch that's already applied instead of erroring.
++set -e
++
++cd "$(dirname "$0")/.."
++
++for p in patches/*.patch; do
++  [ -f "$p" ] || continue
++  if git apply --check "$p" > /dev/null 2>&1; then
++    echo "Applying $p"
++    git apply "$p"
++  else
++    echo "Skipping $p (already applied or conflicts)"
++  fi
++done
+diff --git a/src/components/ApiKeyDialog.tsx b/src/components/ApiKeyDialog.tsx
+new file mode 100644
+index 0000000..0569b33
+--- /dev/null
++++ b/src/components/ApiKeyDialog.tsx
+@@ -0,0 +1,98 @@
++import { Button } from "@/components/ui/button";
++import {
++  Dialog,
++  DialogContent,
++  DialogDescription,
++  DialogHeader,
++  DialogTitle,
++  DialogTrigger,
++} from "@/components/ui/dialog";
++import { Input } from "@/components/ui/input";
++import { Label } from "@/components/ui/label";
++import { apiKeyStorage, useWxtStorage } from "@/utils/storage";
++import { Check, ExternalLink } from "lucide-react";
++import { useEffect, useState } from "react";
++
++const MINSKY_SETTINGS_URL = "https://minsky.pge.pi.gov.br/settings";
++
++interface ApiKeyDialogProps {
++  trigger: React.ReactNode;
++}
++
++export function ApiKeyDialog({ trigger }: ApiKeyDialogProps) {
++  const { value: savedKey, setValue: setSavedKey } = useWxtStorage(apiKeyStorage);
++  const [draft, setDraft] = useState("");
++  const [justSaved, setJustSaved] = useState(false);
++
++  useEffect(() => {
++    setDraft(savedKey || "");
++  }, [savedKey]);
++
++  const isDirty = draft !== (savedKey || "");
++
++  const handleSave = async () => {
++    await setSavedKey(draft.trim());
++    setJustSaved(true);
++    setTimeout(() => setJustSaved(false), 2000);
++  };
++
++  return (
++    <Dialog>
++      <DialogTrigger asChild>{trigger}</DialogTrigger>
++      <DialogContent className="rounded-lg grid-rows-[auto_minmax(0,1fr)] pb-0 px-0">
++        <DialogHeader className="px-4 py-3 border-b border-border">
++          <DialogTitle className="text-base">Chave de API do Minsky</DialogTitle>
++          <DialogDescription className="text-sm text-left">
++            Conecte a extensão à sua conta do Minsky para ver seus prompts, incluindo os privados.
++          </DialogDescription>
++        </DialogHeader>
++
++        <div className="px-4 py-4 space-y-4">
++          <div className="space-y-1.5">
++            <Label htmlFor="minsky-api-key" className="text-xs">Sua chave de API</Label>
++            <div className="flex items-center gap-2">
++              <Input
++                id="minsky-api-key"
++                type="password"
++                placeholder="pchat_..."
++                value={draft}
++                onChange={(e) => setDraft(e.target.value)}
++                className="h-9 text-sm font-mono"
++                autoComplete="off"
++                spellCheck={false}
++              />
++              <Button
++                size="sm"
++                onClick={handleSave}
++                disabled={!isDirty}
++                className="h-9 shrink-0 gap-1.5"
++              >
++                {justSaved ? <Check className="h-3.5 w-3.5" /> : null}
++                {justSaved ? "Salva" : "Salvar"}
++              </Button>
++            </div>
++            <p className="text-[11px] text-muted-foreground">
++              {savedKey ? "Chave configurada." : "Nenhuma chave configurada ainda."}
++            </p>
++          </div>
++
++          <div className="rounded-lg border p-3 bg-muted/40 space-y-2">
++            <p className="text-xs font-medium">Como gerar sua chave</p>
++            <ol className="text-xs text-muted-foreground space-y-1.5 list-decimal list-inside">
++              <li>Acesse o Minsky e faça login com sua conta.</li>
++              <li>Abra <span className="font-medium text-foreground">Configurações</span> (clique no seu usuário, no canto superior direito).</li>
++              <li>Na seção <span className="font-medium text-foreground">Chave API MCP</span>, clique em <span className="font-medium text-foreground">Gerar Chave API</span>.</li>
++              <li>Copie a chave gerada e cole no campo acima.</li>
++            </ol>
++            <a href={MINSKY_SETTINGS_URL} target="_blank" rel="noopener noreferrer">
++              <Button variant="outline" size="sm" className="gap-1.5 mt-1">
++                Abrir Configurações do Minsky
++                <ExternalLink className="h-3.5 w-3.5" />
++              </Button>
++            </a>
++          </div>
++        </div>
++      </DialogContent>
++    </Dialog>
++  );
++}
+diff --git a/src/components/ApiKeyRequired.tsx b/src/components/ApiKeyRequired.tsx
+new file mode 100644
+index 0000000..244aa30
+--- /dev/null
++++ b/src/components/ApiKeyRequired.tsx
+@@ -0,0 +1,31 @@
++import { Button } from "@/components/ui/button";
++import { ApiKeyDialog } from "./ApiKeyDialog";
++import { KeyRound } from "lucide-react";
++
++interface ApiKeyRequiredProps {
++  invalid?: boolean;
++}
++
++export function ApiKeyRequired({ invalid = false }: ApiKeyRequiredProps) {
++  return (
++    <div className="text-center py-12 space-y-4 px-6">
++      <KeyRound className="h-8 w-8 mx-auto text-muted-foreground" />
++      <div className="text-lg font-semibold text-foreground">
++        {invalid ? "Chave de API inválida" : "Conecte sua conta do Minsky"}
++      </div>
++      <p className="text-sm text-muted-foreground max-w-[320px] mx-auto">
++        {invalid
++          ? "A chave configurada foi recusada pelo Minsky. Gere uma nova chave e atualize aqui."
++          : "Configure sua chave de API do Minsky para ver seus prompts."}
++      </p>
++      <ApiKeyDialog
++        trigger={
++          <Button variant="outline" className="mt-2 gap-2">
++            <KeyRound className="h-4 w-4" />
++            Configurar chave de API
++          </Button>
++        }
++      />
++    </div>
++  );
++}
+diff --git a/src/entrypoints/popup/App.tsx b/src/entrypoints/popup/App.tsx
+index 46ef3d0..ba2e547 100644
+--- a/src/entrypoints/popup/App.tsx
++++ b/src/entrypoints/popup/App.tsx
+@@ -1,3 +1,4 @@
++import { ApiKeyRequired } from '@/components/ApiKeyRequired';
+ import { Container } from '@/components/Container';
+ import { EmptyPrompts } from '@/components/EmptyPrompts';
+ import { LoadingPrompts } from '@/components/LoadingPrompts';
+@@ -6,6 +7,7 @@ import { PromptsList } from '@/components/PromptsList';
+ import { ScrollToTop } from '@/components/ScrollToTop';
+ import { SidePanelNotice } from '@/components/SidePanelNotice';
+ import { analytics } from '@/lib/analytics';
++import { ApiKeyInvalidError, ApiKeyRequiredError } from '@/lib/api';
+ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+ import { useEffect } from 'react';
+ import { PromptsProvider, usePrompts } from '@/lib/contexts/PromptsContext';
+@@ -20,7 +22,7 @@ const queryClient = new QueryClient({
+ });
+ 
+ function AppContent() {
+-  const { filteredPrompts, isLoading } = usePrompts();
++  const { filteredPrompts, isLoading, error } = usePrompts();
+ 
+   useEffect(() => {
+     analytics.extensionOpened();
+@@ -35,6 +37,14 @@ function AppContent() {
+           <Container className="h-full">
+             <LoadingPrompts />
+           </Container>
++        ) : error instanceof ApiKeyRequiredError ? (
++          <Container className="h-full">
++            <ApiKeyRequired />
++          </Container>
++        ) : error instanceof ApiKeyInvalidError ? (
++          <Container className="h-full">
++            <ApiKeyRequired invalid />
++          </Container>
+         ) : filteredPrompts.length === 0 ? (
+           <Container className="h-full">
+             <EmptyPrompts />
+diff --git a/src/lib/api.ts b/src/lib/api.ts
+index e8f4f80..477e787 100644
+--- a/src/lib/api.ts
++++ b/src/lib/api.ts
+@@ -1,7 +1,43 @@
++import { apiKeyStorage } from "@/utils/storage";
+ import { ApiPrompt, ApiPromptDetail, Category, Prompt, PromptsResponse } from "./types";
+ 
+-const API_URL = "https://prompts.chat/prompts.json";
+-const PROMPT_DETAIL_URL = (id: string) => `https://prompts.chat/api/prompts/${id}`;
++const MINSKY_BASE_URL = "https://minsky.pge.pi.gov.br";
++const API_URL = `${MINSKY_BASE_URL}/prompts.json`;
++const PROMPT_DETAIL_URL = (id: string) => `${MINSKY_BASE_URL}/api/prompts/${id}`;
++
++// Thrown when no API key has been configured yet in the extension settings.
++export class ApiKeyRequiredError extends Error {
++  constructor() {
++    super("API key not configured");
++    this.name = "ApiKeyRequiredError";
++  }
++}
++
++// Thrown when the configured key was rejected by Minsky (revoked, wrong, etc).
++export class ApiKeyInvalidError extends Error {
++  constructor() {
++    super("API key invalid or unauthorized");
++    this.name = "ApiKeyInvalidError";
++  }
++}
++
++async function authenticatedFetch(url: string): Promise<Response> {
++  const apiKey = await apiKeyStorage.getValue();
++  if (!apiKey) {
++    throw new ApiKeyRequiredError();
++  }
++
++  const response = await fetch(url, { headers: { PROMPTS_API_KEY: apiKey } });
++
++  // A missing/invalid key never reaches the route handler - Minsky's auth
++  // gate either 401s (API routes) or redirects to /login (page routes),
++  // which `fetch` follows transparently, so `redirected` is the tell.
++  if (response.status === 401 || response.status === 403 || response.redirected) {
++    throw new ApiKeyInvalidError();
++  }
++
++  return response;
++}
+ 
+ let cachedPrompts: Prompt[] | null = null;
+ let cachedCategories: Category[] | null = null;
+@@ -60,7 +96,7 @@ export async function fetchPrompts(): Promise<PromptsResponse> {
+     };
+   }
+ 
+-  const response = await fetch(API_URL);
++  const response = await authenticatedFetch(API_URL);
+   if (!response.ok) {
+     throw new Error(`API Error: ${response.status} ${response.statusText}`);
+   }
+@@ -83,7 +119,7 @@ export async function fetchPrompts(): Promise<PromptsResponse> {
+ }
+ 
+ async function requestPromptContent(id: string): Promise<string | null> {
+-  const response = await fetch(PROMPT_DETAIL_URL(id));
++  const response = await authenticatedFetch(PROMPT_DETAIL_URL(id));
+   if (!response.ok) {
+     throw new Error(`API Error: ${response.status} ${response.statusText}`);
+   }
+diff --git a/src/lib/hooks/usePrompts.ts b/src/lib/hooks/usePrompts.ts
+index 0d7f307..a02260f 100644
+--- a/src/lib/hooks/usePrompts.ts
++++ b/src/lib/hooks/usePrompts.ts
+@@ -1,6 +1,6 @@
+ import { useQuery } from '@tanstack/react-query';
+ import { useCallback } from 'react';
+-import { fetchPrompts, invalidateCache } from '../api';
++import { ApiKeyInvalidError, ApiKeyRequiredError, fetchPrompts, invalidateCache } from '../api';
+ 
+ export const promptsKeys = {
+   all: ['prompts'] as const,
+@@ -12,6 +12,9 @@ export function usePromptsQuery() {
+     queryFn: fetchPrompts,
+     staleTime: 5 * 60 * 1000,
+     gcTime: 30 * 60 * 1000,
++    // No point retrying a missing/invalid key - it fails the same way every time.
++    retry: (failureCount, err) =>
++      !(err instanceof ApiKeyRequiredError || err instanceof ApiKeyInvalidError) && failureCount < 2,
+   });
+ 
+   const handleRefetch = useCallback(() => {
+diff --git a/src/utils/storage.ts b/src/utils/storage.ts
+index 8fd62f5..7677b28 100644
+--- a/src/utils/storage.ts
++++ b/src/utils/storage.ts
+@@ -14,6 +14,10 @@ export const platformEnabledStorage = storage.defineItem<Record<string, boolean>
+   fallback: {},
+ });
+ 
++export const apiKeyStorage = storage.defineItem<string>('sync:apiKey', {
++  fallback: '',
++});
++
+ // Note: ga_client_id initialization is handled in analytics.ts since it needs
+ // to generate a unique UUID on first access (storage.defineItem doesn't support functions)
+ export const gaClientIdStorage = storage.defineItem<string>('local:ga_client_id');
+diff --git a/tests/unit/api.test.ts b/tests/unit/api.test.ts
+index 8d4fed3..c6900da 100644
+--- a/tests/unit/api.test.ts
++++ b/tests/unit/api.test.ts
+@@ -1,4 +1,9 @@
+ import { describe, it, expect, vi, beforeEach } from 'vitest';
++
++vi.mock('@/utils/storage', () => ({
++  apiKeyStorage: { getValue: vi.fn().mockResolvedValue('pchat_testkey') },
++}));
++
+ import { fetchPrompts, invalidateCache } from '../../src/lib/api';
+ 
+ const mockApiResponse = {
+@@ -32,6 +37,7 @@ const mockApiResponse = {
+ function mockSuccessResponse(): void {
+   vi.mocked(global.fetch).mockResolvedValue({
+     ok: true,
++    redirected: false,
+     json: () => Promise.resolve(mockApiResponse),
+   } as Response);
+ }
+@@ -46,7 +52,9 @@ describe('fetchPrompts', () => {
+     mockSuccessResponse();
+     const result = await fetchPrompts();
+ 
+-    expect(global.fetch).toHaveBeenCalledWith('https://prompts.chat/prompts.json');
++    expect(global.fetch).toHaveBeenCalledWith('https://minsky.pge.pi.gov.br/prompts.json', {
++      headers: { PROMPTS_API_KEY: 'pchat_testkey' },
++    });
+     expect(result.prompts).toHaveLength(2);
+     expect(result.total).toBe(2);
+   });
+@@ -101,6 +109,7 @@ describe('fetchPrompts', () => {
+   it('should throw error on API failure', async () => {
+     vi.mocked(global.fetch).mockResolvedValueOnce({
+       ok: false,
++      redirected: false,
+       status: 500,
+       statusText: 'Internal Server Error',
+     } as Response);
+diff --git a/wxt.config.ts b/wxt.config.ts
+index 808bd3e..7f5e62b 100644
+--- a/wxt.config.ts
++++ b/wxt.config.ts
+@@ -6,8 +6,8 @@ export default defineConfig({
+   modules: ["@wxt-dev/module-react"],
+   srcDir: "src",
+   manifest: ({ browser, manifestVersion }) => ({
+-    name: "prompts.chat",
+-    description: "prompts.chat - AI-powered prompt library for ChatGPT, Claude, Gemini, and more",
++    name: "Minsky",
++    description: "Minsky - Biblioteca de Prompts da PGE-PI, com acesso rápido para ChatGPT, Claude, Gemini e mais",
+     version: pkg.version,
+     permissions: [
+       "storage",
+@@ -35,7 +35,7 @@ export default defineConfig({
+       "https://lovable.dev/*",
+       "https://v0.dev/*",
+       "https://duck.ai/*",
+-      "https://prompts.chat/*",
++      "https://minsky.pge.pi.gov.br/*",
+     ],
+     web_accessible_resources: [
+       {
+@@ -48,7 +48,7 @@ export default defineConfig({
+       ? {
+           browser_specific_settings: {
+             gecko: {
+-              id: "extension@prompts.chat",
++              id: "extension@minsky.pge.pi.gov.br",
+               strict_min_version: "109.0",
+               // Firefox requires disclosure of data collection (we use Google Analytics)
+               data_collection_permissions: {

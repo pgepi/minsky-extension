@@ -1,0 +1,91 @@
+diff --git a/README.md b/README.md
+index db1e998..c29d9b6 100644
+--- a/README.md
++++ b/README.md
+@@ -1,10 +1,27 @@
+-# prompts.chat Extension
++# Minsky Extension
+ 
+ <p align="center">
+-  <img src="public/prompts-chat-img.png" alt="prompts.chat Extension Screenshot" width="800" style="max-width: 100%; height: auto;" />
++  <img src="public/prompts-chat-img.png" alt="Minsky Extension Screenshot" width="800" style="max-width: 100%; height: auto;" />
+ </p>
+ 
+-A browser extension that enhances [prompts.chat](https://prompts.chat) with additional features and improvements. This extension is built on top of the amazing [Awesome ChatGPT Prompts](https://github.com/f/awesome-chatgpt-prompts) collection by [Fatih Kadir Akın](https://github.com/f).
++This is **Minsky**, a white-label fork of the [prompts.chat browser extension](https://github.com/fatihsolhan/prompts-chat-extension)
++for the internal use of PGE-PI. It connects to the private Minsky prompt library at
++`minsky.pge.pi.gov.br` instead of the public prompts.chat — see
++[**Connecting to Minsky**](#connecting-to-minsky) below.
++
++## Upstream-sync-safe customizations
++
++Every change from upstream lives in `patches/*.patch` and is reapplied automatically on
++`yarn install` (via `postinstall`, see `scripts/apply-patches.sh`) — source files stay
++byte-for-byte identical to upstream in git. To add a new customization: edit the file, run
++`git diff <file> > patches/000N-description.patch` (add `--binary` for icons/images), then
++`git checkout -- <file>` to keep the working tree pristine.
++
++## Connecting to Minsky
++
++Unlike upstream, this extension requires an **API key** — Minsky's prompt library is private
++(login-gated), so the extension can't browse it anonymously. Click the key icon in the toolbar
++and follow the in-app instructions to generate one from your Minsky account settings.
+ 
+ ## Features
+ 
+@@ -18,15 +35,9 @@ A browser extension that enhances [prompts.chat](https://prompts.chat) with addi
+ 
+ ## Installation
+ 
+-### Chrome Web Store
+-
+-[Install from Chrome Web Store](https://chromewebstore.google.com/detail/promptschat/eemdohkhbaifiocagjlhibfbhamlbeej)
+-
+-### Firefox Add-ons
+-
+-[Install from Firefox Add-ons](https://addons.mozilla.org/firefox/addon/prompts-chat/)
+-
+-You can also download the latest version from our [GitHub Releases](https://github.com/fatihsolhan/prompts-chat-extension/releases)
++Minsky isn't published to the Chrome Web Store or Firefox Add-ons — it's installed manually
++(internal PGE-PI distribution). Download the latest build from
++[GitHub Releases](https://github.com/pgepi/minsky-extension/releases) or build it yourself below.
+ 
+ ### Manual Installation (Chrome)
+ 1. Clone this repository
+@@ -73,22 +84,19 @@ This project uses [semantic-release](https://semantic-release.gitbook.io/) for a
+ - Version is automatically determined from commit messages
+ - CHANGELOG.md is automatically updated
+ - GitHub Release is created
+-- Extension is published to Chrome Web Store and Firefox Add-ons
+ 
+-Check our [releases page](https://github.com/fatihsolhan/prompts-chat-extension/releases) for the latest versions.
++Check our [releases page](https://github.com/pgepi/minsky-extension/releases) for the latest versions.
+ 
+ ### Adding New Prompts
+ 
+-Want to add a new prompt? Submit it directly on [prompts.chat](https://prompts.chat/prompts/new) and it will automatically become available in this extension.
++Want to add a new prompt? Submit it directly on [Minsky](https://minsky.pge.pi.gov.br/prompts/new) and it will automatically become available in this extension.
+ 
+ ## Credits
+ 
+-This extension is built on top of the [Awesome ChatGPT Prompts](https://github.com/f/awesome-chatgpt-prompts) collection. We are grateful to [Fatih Kadir Akın](https://github.com/f) and all the contributors of the original repository for creating and maintaining such a valuable resource.
+-
+-### Original Resources
+-- [prompts.chat Website](https://prompts.chat)
+-- [Awesome ChatGPT Prompts Repository](https://github.com/f/awesome-chatgpt-prompts)
+-- [Hugging Face Dataset](https://huggingface.co/datasets/fka/awesome-chatgpt-prompts/)
++This extension is a fork of the [prompts.chat extension](https://github.com/fatihsolhan/prompts-chat-extension) by
++Fatih Solhan, itself built on top of the [Awesome ChatGPT Prompts](https://github.com/f/awesome-chatgpt-prompts)
++collection by [Fatih Kadir Akın](https://github.com/f). We are grateful to both for the original work this fork
++builds on.
+ 
+ ## License
+ 
+@@ -96,5 +104,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
+ 
+ ## Author
+ 
+-- Extension by [Fatih Solhan](https://github.com/fatihsolhan)
++- Minsky fork by [Sérgio Baião de Azevedo Carvalho](https://github.com/sergiobaiao) (Gerente de T.I.C., PGE-PI)
++- Original extension by [Fatih Solhan](https://github.com/fatihsolhan)
+ - Original prompts.chat by [Fatih Kadir Akın](https://github.com/f)

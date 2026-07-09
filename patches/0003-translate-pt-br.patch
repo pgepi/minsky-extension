@@ -1,0 +1,411 @@
+diff --git a/src/components/AISettingsDialog.tsx b/src/components/AISettingsDialog.tsx
+index bbfd99f..f62397e 100644
+--- a/src/components/AISettingsDialog.tsx
++++ b/src/components/AISettingsDialog.tsx
+@@ -73,9 +73,9 @@ export function AISettingsDialog({ trigger }: AISettingsDialogProps) {
+       <DialogTrigger asChild>{trigger}</DialogTrigger>
+       <DialogContent className="rounded-lg grid-rows-[auto_minmax(0,1fr)] pb-0 px-0">
+         <DialogHeader className="px-4 py-3 border-b border-border">
+-          <DialogTitle className="text-base">AI Settings</DialogTitle>
++          <DialogTitle className="text-base">Configurações de IA</DialogTitle>
+           <DialogDescription className="text-sm text-left">
+-            Enable or disable AI models shown in the Run menu.
++            Ative ou desative os modelos de IA exibidos no menu Executar.
+           </DialogDescription>
+         </DialogHeader>
+ 
+@@ -104,14 +104,14 @@ export function AISettingsDialog({ trigger }: AISettingsDialogProps) {
+               )}
+             >
+               <Code2 className="h-3 w-3" />
+-              Code
++              Código
+             </button>
+           </div>
+ 
+           {/* Count */}
+           <div className="px-4 pt-2 pb-1">
+             <span className="text-xs text-muted-foreground">
+-              {enabledCount} of {platforms.length} enabled
++              {enabledCount} de {platforms.length} ativados
+             </span>
+           </div>
+ 
+diff --git a/src/components/EmptyPrompts.tsx b/src/components/EmptyPrompts.tsx
+index 01efae5..f1a8987 100644
+--- a/src/components/EmptyPrompts.tsx
++++ b/src/components/EmptyPrompts.tsx
+@@ -9,17 +9,17 @@ export function EmptyPrompts() {
+     <div className="text-center py-12 space-y-4">
+       <FileQuestion className="h-8 w-8 mx-auto text-muted-foreground" />
+       <div className="text-lg font-semibold text-foreground">
+-        No prompts found
++        Nenhum prompt encontrado
+       </div>
+       <p className="text-sm text-muted-foreground">
+-        Try adjusting your search or filters
++        Tente ajustar sua busca ou filtros
+       </p>
+       <Button
+         variant="outline"
+         onClick={clearAllFilters}
+         className="mt-2"
+       >
+-        Clear all filters
++        Limpar todos os filtros
+       </Button>
+     </div>
+   );
+diff --git a/src/components/FilterSelect.tsx b/src/components/FilterSelect.tsx
+index f4d5323..927bac4 100644
+--- a/src/components/FilterSelect.tsx
++++ b/src/components/FilterSelect.tsx
+@@ -34,7 +34,7 @@ export function FilterSelect({
+   title,
+   icon,
+   multiple = false,
+-  searchPlaceholder = "Search...",
++  searchPlaceholder = "Buscar...",
+ }: FilterSelectProps) {
+   const [open, setOpen] = useState(false);
+   const [search, setSearch] = useState("");
+@@ -101,7 +101,7 @@ export function FilterSelect({
+         const selected = options.find(opt => (value as string[]).includes(opt.value));
+         return selected?.label || placeholder;
+       }
+-      return `${selectedCount} selected`;
++      return `${selectedCount} selecionados`;
+     }
+     if (!value) return placeholder;
+     const selected = options.find(opt => opt.value === value);
+@@ -149,7 +149,7 @@ export function FilterSelect({
+               onClick={handleClearAll}
+               className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+             >
+-              Clear
++              Limpar
+             </button>
+           )}
+         </div>
+@@ -180,7 +180,7 @@ export function FilterSelect({
+           <div className="p-1.5">
+             {filteredOptions.length === 0 ? (
+               <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+-                No results found
++                Nenhum resultado encontrado
+               </div>
+             ) : (
+               filteredOptions.map(option => {
+diff --git a/src/components/HighlightedContent.tsx b/src/components/HighlightedContent.tsx
+index a277048..30b60f1 100644
+--- a/src/components/HighlightedContent.tsx
++++ b/src/components/HighlightedContent.tsx
+@@ -82,7 +82,7 @@ function EditableVariable({ variable, onChange }: EditableVariableProps): React.
+           <div className="px-4 py-3 border-b border-border/50">
+             <p className="text-sm font-semibold text-foreground">{variable.name}</p>
+             {variable.defaultValue && (
+-              <p className="text-xs text-muted-foreground mt-0.5">Default: {variable.defaultValue}</p>
++              <p className="text-xs text-muted-foreground mt-0.5">Padrão: {variable.defaultValue}</p>
+             )}
+           </div>
+           <div className="p-4 space-y-3">
+@@ -94,11 +94,11 @@ function EditableVariable({ variable, onChange }: EditableVariableProps): React.
+               onBlur={() => {
+                 onChange(localValue);
+               }}
+-              placeholder={`Enter ${variable.name.toLowerCase()}`}
++              placeholder={`Digite ${variable.name.toLowerCase()}`}
+               className="h-10 text-sm rounded-lg border-border focus:border-foreground/30 focus:ring-1 focus:ring-foreground/20"
+             />
+             <div className="flex items-center justify-between">
+-              <p className="text-[10px] text-muted-foreground">Press Enter ↵ to save</p>
++              <p className="text-[10px] text-muted-foreground">Pressione Enter ↵ para salvar</p>
+               <button
+                 onClick={() => {
+                   onChange(localValue);
+@@ -106,7 +106,7 @@ function EditableVariable({ variable, onChange }: EditableVariableProps): React.
+                 }}
+                 className="text-xs font-medium text-primary hover:underline"
+               >
+-                Done
++                Concluído
+               </button>
+             </div>
+           </div>
+diff --git a/src/components/LoadingPrompts.tsx b/src/components/LoadingPrompts.tsx
+index ad944f3..8f59ac9 100644
+--- a/src/components/LoadingPrompts.tsx
++++ b/src/components/LoadingPrompts.tsx
+@@ -5,10 +5,10 @@ export function LoadingPrompts() {
+     <div className="text-center py-12 space-y-4">
+       <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
+       <div className="text-lg font-semibold text-foreground">
+-        Loading prompts...
++        Carregando prompts...
+       </div>
+       <p className="text-sm text-muted-foreground">
+-        Please wait while we fetch the prompts
++        Aguarde enquanto buscamos os prompts
+       </p>
+     </div>
+   );
+diff --git a/src/components/PromptDetailDialog.tsx b/src/components/PromptDetailDialog.tsx
+index 7ba6466..d2af485 100644
+--- a/src/components/PromptDetailDialog.tsx
++++ b/src/components/PromptDetailDialog.tsx
+@@ -134,7 +134,7 @@ function VariableIndicator({ filledCount, totalCount }: VariableIndicatorProps):
+             </span>
+           </div>
+         </TooltipTrigger>
+-        <TooltipContent side="top">Click highlighted variables in content to edit</TooltipContent>
++        <TooltipContent side="top">Clique nas variáveis destacadas no conteúdo para editar</TooltipContent>
+       </Tooltip>
+     </TooltipProvider>
+   );
+@@ -187,7 +187,7 @@ function DialogFooterActions({
+                 {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+               </Button>
+             </TooltipTrigger>
+-            <TooltipContent side="top">{isCopied ? "Copied!" : "Copy prompt"}</TooltipContent>
++            <TooltipContent side="top">{isCopied ? "Copiado!" : "Copiar prompt"}</TooltipContent>
+           </Tooltip>
+ 
+           <Tooltip>
+@@ -199,7 +199,7 @@ function DialogFooterActions({
+                 asChild
+               >
+                 <a
+-                  href={`https://prompts.chat/prompts/${prompt.id}_${prompt.slug}`}
++                  href={`https://minsky.pge.pi.gov.br/prompts/${prompt.id}_${prompt.slug}`}
+                   target="_blank"
+                   rel="noopener noreferrer"
+                 >
+@@ -207,7 +207,7 @@ function DialogFooterActions({
+                 </a>
+               </Button>
+             </TooltipTrigger>
+-            <TooltipContent side="top">View on prompts.chat</TooltipContent>
++            <TooltipContent side="top">Ver no Minsky</TooltipContent>
+           </Tooltip>
+         </TooltipProvider>
+       </div>
+@@ -304,7 +304,7 @@ export function PromptDetailDialog({ prompt, open, onOpenChange }: PromptDetailD
+ 
+               <div className="flex items-center gap-2 text-xs flex-wrap">
+                 <a
+-                  href={`https://prompts.chat/@${prompt.author}`}
++                  href={`https://minsky.pge.pi.gov.br/@${prompt.author}`}
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+@@ -335,7 +335,7 @@ export function PromptDetailDialog({ prompt, open, onOpenChange }: PromptDetailD
+               className="w-full max-h-[200px] rounded-lg bg-black"
+               preload="metadata"
+             >
+-              Your browser does not support video playback.
++              Seu navegador não suporta a reprodução de vídeo.
+             </video>
+           )}
+ 
+diff --git a/src/components/PromptsList.tsx b/src/components/PromptsList.tsx
+index 3aff1bd..90e4272 100644
+--- a/src/components/PromptsList.tsx
++++ b/src/components/PromptsList.tsx
+@@ -14,9 +14,9 @@ function NoResultsState() {
+       <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
+         <FileSearch className="h-8 w-8 text-muted-foreground" />
+       </div>
+-      <h3 className="text-lg font-semibold mb-2">No prompts found</h3>
++      <h3 className="text-lg font-semibold mb-2">Nenhum prompt encontrado</h3>
+       <p className="text-sm text-muted-foreground max-w-[280px]">
+-        Try adjusting your search or filters to find what you're looking for.
++        Tente ajustar sua busca ou filtros para encontrar o que procura.
+       </p>
+     </div>
+   );
+@@ -28,8 +28,8 @@ function LoadingState() {
+       <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+         <Sparkles className="h-8 w-8 text-primary" />
+       </div>
+-      <h3 className="text-lg font-semibold mb-2">Loading prompts...</h3>
+-      <p className="text-sm text-muted-foreground">Fetching the latest prompts for you.</p>
++      <h3 className="text-lg font-semibold mb-2">Carregando prompts...</h3>
++      <p className="text-sm text-muted-foreground">Buscando os prompts mais recentes para você.</p>
+     </div>
+   );
+ }
+@@ -120,7 +120,7 @@ export function PromptsList() {
+         <div className="flex items-center py-2 text-xs text-muted-foreground">
+           <span>
+             {filteredPrompts.length} {filteredPrompts.length === 1 ? "prompt" : "prompts"}
+-            {hasFilters && " found"}
++            {hasFilters && " encontrados"}
+           </span>
+         </div>
+       </Container>
+diff --git a/src/components/RunPromptButton.tsx b/src/components/RunPromptButton.tsx
+index 0341b3d..81950eb 100644
+--- a/src/components/RunPromptButton.tsx
++++ b/src/components/RunPromptButton.tsx
+@@ -42,7 +42,7 @@ function PlatformItem({ platform, onClick, showCopied }: PlatformItemProps): Rea
+       {showCopied && (
+         <span className="flex items-center gap-1 text-[10px] font-semibold text-green-600 bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded">
+           <Check className="h-2.5 w-2.5" />
+-          Copied
++          Copiado
+         </span>
+       )}
+     </button>
+@@ -104,7 +104,7 @@ export function RunPromptButton({
+       ) : (
+         <Play className="size-3 fill-current" />
+       )}
+-      Run
++      Executar
+       <ChevronDown className="size-3 opacity-60 group-data-[state=open]:rotate-180 transition-transform duration-200" />
+     </Button>
+   );
+@@ -137,7 +137,7 @@ export function RunPromptButton({
+             )}
+           >
+             <Code2 className="h-3 w-3" />
+-            Code
++            Código
+           </button>
+         </div>
+ 
+diff --git a/src/components/SidePanelNotice.tsx b/src/components/SidePanelNotice.tsx
+index caf5279..90ce6fc 100644
+--- a/src/components/SidePanelNotice.tsx
++++ b/src/components/SidePanelNotice.tsx
+@@ -53,7 +53,7 @@ export function SidePanelNotice() {
+       <div className="flex items-center gap-2 text-sm">
+         <PanelRight className="h-4 w-4 text-primary shrink-0" />
+         <span className="text-foreground/80">
+-          For the best experience, open in Side Panel. It stays visible as you browse.
++          Para a melhor experiência, abra no Painel Lateral. Ele fica visível enquanto você navega.
+         </span>
+       </div>
+       <div className="flex items-center gap-1 shrink-0">
+@@ -63,7 +63,7 @@ export function SidePanelNotice() {
+           className="h-7 text-xs"
+           onClick={handleOpenSidePanel}
+         >
+-          Open
++          Abrir
+         </Button>
+         <Button
+           size="icon"
+diff --git a/src/components/TypeBadge.tsx b/src/components/TypeBadge.tsx
+index 90f0355..de48bcc 100644
+--- a/src/components/TypeBadge.tsx
++++ b/src/components/TypeBadge.tsx
+@@ -13,23 +13,23 @@ interface TypeBadgeProps {
+ 
+ const TYPE_CONFIG: Record<PromptType, { label: string; className: string }> = {
+   TEXT: {
+-    label: 'Text',
++    label: 'Texto',
+     className: 'bg-blue-500/10 text-blue-500 dark:bg-blue-500/20',
+   },
+   STRUCTURED: {
+-    label: 'Structured',
++    label: 'Estruturado',
+     className: 'bg-purple-500/10 text-purple-500 dark:bg-purple-500/20',
+   },
+   IMAGE: {
+-    label: 'Image',
++    label: 'Imagem',
+     className: 'bg-green-500/10 text-green-500 dark:bg-green-500/20',
+   },
+   VIDEO: {
+-    label: 'Video',
++    label: 'Vídeo',
+     className: 'bg-orange-500/10 text-orange-500 dark:bg-orange-500/20',
+   },
+   AUDIO: {
+-    label: 'Audio',
++    label: 'Áudio',
+     className: 'bg-pink-500/10 text-pink-500 dark:bg-pink-500/20',
+   },
+ };
+diff --git a/src/entrypoints/popup/index.html b/src/entrypoints/popup/index.html
+index 485e210..edd6b94 100644
+--- a/src/entrypoints/popup/index.html
++++ b/src/entrypoints/popup/index.html
+@@ -1,9 +1,9 @@
+ <!DOCTYPE html>
+-<html lang="en">
++<html lang="pt-BR">
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>prompts.chat</title>
++    <title>Minsky</title>
+   </head>
+   <body>
+     <div id="root" data-context="popup"></div>
+diff --git a/src/entrypoints/sidepanel/index.html b/src/entrypoints/sidepanel/index.html
+index fda5187..4fd4a95 100644
+--- a/src/entrypoints/sidepanel/index.html
++++ b/src/entrypoints/sidepanel/index.html
+@@ -1,9 +1,9 @@
+ <!DOCTYPE html>
+-<html lang="en">
++<html lang="pt-BR">
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>prompts.chat</title>
++    <title>Minsky</title>
+   </head>
+   <body>
+     <div id="root" data-context="sidepanel"></div>
+diff --git a/tests/components/TypeBadge.test.tsx b/tests/components/TypeBadge.test.tsx
+index cb5e595..7cc077b 100644
+--- a/tests/components/TypeBadge.test.tsx
++++ b/tests/components/TypeBadge.test.tsx
+@@ -4,11 +4,11 @@ import { TypeBadge } from '../../src/components/TypeBadge';
+ 
+ describe('TypeBadge', () => {
+   const types = [
+-    ['TEXT', 'Text'],
+-    ['STRUCTURED', 'Structured'],
+-    ['IMAGE', 'Image'],
+-    ['VIDEO', 'Video'],
+-    ['AUDIO', 'Audio'],
++    ['TEXT', 'Texto'],
++    ['STRUCTURED', 'Estruturado'],
++    ['IMAGE', 'Imagem'],
++    ['VIDEO', 'Vídeo'],
++    ['AUDIO', 'Áudio'],
+   ] as const;
+ 
+   it.each(types)('should render %s type with label "%s"', (type, label) => {
+@@ -18,22 +18,22 @@ describe('TypeBadge', () => {
+ 
+   it('should apply custom className', () => {
+     render(<TypeBadge type="TEXT" className="custom-class" />);
+-    expect(screen.getByText('Text')).toHaveClass('custom-class');
++    expect(screen.getByText('Texto')).toHaveClass('custom-class');
+   });
+ 
+   it('should have correct styling for TEXT type', () => {
+     render(<TypeBadge type="TEXT" />);
+-    expect(screen.getByText('Text')).toHaveClass('bg-blue-500/10', 'text-blue-500');
++    expect(screen.getByText('Texto')).toHaveClass('bg-blue-500/10', 'text-blue-500');
+   });
+ 
+   it('should have correct styling for STRUCTURED type', () => {
+     render(<TypeBadge type="STRUCTURED" />);
+-    expect(screen.getByText('Structured')).toHaveClass('bg-purple-500/10', 'text-purple-500');
++    expect(screen.getByText('Estruturado')).toHaveClass('bg-purple-500/10', 'text-purple-500');
+   });
+ 
+   it('should default to TEXT styling for unknown types', () => {
+     // @ts-expect-error - testing unknown type fallback
+     render(<TypeBadge type="UNKNOWN" />);
+-    expect(screen.getByText('Text')).toHaveClass('bg-blue-500/10', 'text-blue-500');
++    expect(screen.getByText('Texto')).toHaveClass('bg-blue-500/10', 'text-blue-500');
+   });
+ });
