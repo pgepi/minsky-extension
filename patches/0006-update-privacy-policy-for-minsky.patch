@@ -1,0 +1,114 @@
+diff --git a/PRIVACY.md b/PRIVACY.md
+index 740a68e..9a429a3 100644
+--- a/PRIVACY.md
++++ b/PRIVACY.md
+@@ -1,52 +1,69 @@
+-# Privacy Policy for prompts.chat Extension
++# Política de Privacidade da Extensão Minsky
+ 
+-Last updated: January 25, 2026
++Última atualização: 10 de julho de 2026
+ 
+-## Overview
+-The prompts.chat Extension ("Extension") is committed to protecting your privacy. This Privacy Policy explains how we handle information when you use our browser extension.
++## Visão Geral
++A extensão Minsky ("Extensão") é um fork privado da extensão prompts.chat, mantido para uso
++interno da PGE-PI (Procuradoria Geral do Estado do Piauí). Esta política explica como
++tratamos informações ao usar a Extensão.
+ 
+-## Information Collection
+-The Extension does not collect, store, or transmit any personal information. We only use the following data locally on your device:
++## Chave de API
++A Extensão requer uma chave de API do Minsky para funcionar, já que a biblioteca de prompts
++é privada (login obrigatório). A chave é:
++- Armazenada localmente no seu navegador (sincronizada entre dispositivos via conta do
++  navegador, como qualquer configuração de extensão)
++- Enviada apenas para `minsky.pge.pi.gov.br`, no cabeçalho `PROMPTS_API_KEY`, para
++  autenticar as buscas de prompts
++- Nunca enviada a nenhum outro domínio ou serviço
+ 
+-- **Theme Preference**: Your dark/light mode setting is stored locally in your browser
+-- **Browser Storage**: The extension uses local browser storage only for maintaining your preferences
+-- **Active Tab Information**: The extension needs to know which AI platform you're currently using to provide the correct prompt insertion functionality
++## Coleta de Informações
++A Extensão não coleta, armazena ou transmite informações pessoais além da chave de API
++acima. Localmente no seu dispositivo, armazenamos apenas:
++- **Chave de API do Minsky**: para autenticar as requisições
++- **Preferência de tema**: modo claro/escuro
++- **Plataformas de IA habilitadas** e **modelo selecionado**: suas preferências de uso
+ 
+-## Data Usage
+-- Theme preferences and settings are stored locally on your device
+-- No personal information is collected or stored
++## Análise de Uso (Analytics)
++Usamos o Google Analytics para coletar dados de uso anônimos e melhorar a extensão:
++- **Aberturas da extensão**: quando você abre o popup ou o painel lateral
++- **Uso de prompts**: quando você executa/copia um prompt (rastreamos a ação, não o
++  conteúdo do prompt)
++- **Interações de recursos**: filtros, buscas, cópias
+ 
+-## Analytics
+-We use Google Analytics to collect anonymous usage data to help improve the extension. This includes:
+-- **Extension opens**: When you open the extension popup or side panel
+-- **Prompt usage**: When you use a prompt (we track the action, not the prompt content)
+-- **Feature interactions**: Basic interactions like filtering, searching, and copying prompts
++**O que NÃO coletamos:**
++- Sua chave de API ou identificadores pessoais
++- Conteúdo dos prompts ou suas conversas com as IAs
++- Histórico de navegação fora do uso da extensão
++- Qualquer dado das plataformas de IA que você usa
+ 
+-**What we do NOT collect:**
+-- Personal information or identifiers
+-- Prompt content or your conversations
+-- Browsing history outside of extension usage
+-- Any data from AI platforms you use
++Os dados de analytics são anônimos (identificados por um UUID aleatório gerado
++localmente, não vinculado à sua chave de API ou identidade).
+ 
+-Analytics data is anonymous and used solely to understand how the extension is used and identify areas for improvement. You can disable analytics by blocking requests to Google Analytics in your browser.
++## Permissões
++- **storage**: salvar a chave de API e preferências localmente
++- **activeTab**: inserir o prompt selecionado no campo de texto da aba ativa
++- **tabs**: abrir a plataforma de IA escolhida em uma nova aba e detectar a aba ativa
++- **sidePanel**: exibir a extensão como painel lateral fixo do Chrome
++- **host permissions**: acessar `minsky.pge.pi.gov.br` (buscar prompts) e as plataformas
++  de IA suportadas (inserir o prompt no campo de texto)
+ 
+-## Permissions
+-The Extension requires certain permissions to function:
+-- **scripting**: Required to interact with AI platforms' text areas for prompt insertion
+-- **storage**: Required to save your theme preferences locally
+-- **activeTab/tabs**: Required to detect the current AI platform and handle prompt insertions
+-- **sidePanel**: Required to provide the side panel functionality
++## Serviços de Terceiros
++- **Plataformas de IA** (ChatGPT, Claude, Gemini etc.): a Extensão interage com essas
++  páginas apenas para inserir o prompt selecionado. Não coletamos nem processamos dados
++  dessas interações.
++- **Google Analytics**: coleta estatísticas de uso anônimas. A política de privacidade do
++  Google se aplica a esses dados: https://policies.google.com/privacy
++- **Minsky (PGE-PI)**: a Extensão busca prompts em `minsky.pge.pi.gov.br` usando sua
++  chave de API. Nenhum outro dado pessoal é enviado nessas requisições.
+ 
+-## Third-Party Services
+-- **AI Platforms**: The Extension interacts with various AI platforms (ChatGPT, Claude, Gemini, etc.) solely for the purpose of inserting prompts. We do not collect or process any data from these interactions.
+-- **Google Analytics**: We use Google Analytics to collect anonymous usage statistics. Google's privacy policy applies to this data: https://policies.google.com/privacy
+-- **prompts.chat API**: The extension fetches prompt data from prompts.chat servers. No personal data is sent in these requests.
++## Atualizações
++Esta política pode ser atualizada periodicamente. Alterações serão refletidas neste
++documento com a data atualizada.
+ 
+-## Updates
+-This privacy policy may be updated from time to time. Any changes will be reflected in this document with an updated date.
++## Contato
++Dúvidas sobre esta política? Abra uma issue em
++[github.com/pgepi/minsky-extension](https://github.com/pgepi/minsky-extension/issues)
++ou contate Sérgio Baião de Azevedo Carvalho (Gerente de T.I.C., PGE-PI).
+ 
+-## Contact
+-If you have any questions about this Privacy Policy, please create an issue in our [GitHub repository](https://github.com/fatihsolhan/prompts-chat-extension).
+-
+-## Consent
+-By using the Extension, you consent to this Privacy Policy.
++## Consentimento
++Ao usar a Extensão, você consente com esta política de privacidade.
