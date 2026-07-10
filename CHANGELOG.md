@@ -1,3 +1,9 @@
+## [1.0.4](https://github.com/pgepi/minsky-extension/compare/v1.0.3...v1.0.4) (2026-07-10)
+
+### 📚 Documentation
+
+* rewrite privacy policy for Minsky's actual data flow ([32c4b9a](https://github.com/pgepi/minsky-extension/commit/32c4b9aa92f16133a5c526a2064b4798c4fa950c))
+
 ## [1.0.3](https://github.com/pgepi/minsky-extension/compare/v1.0.2...v1.0.3) (2026-07-09)
 
 ### 🐛 Bug Fixes
