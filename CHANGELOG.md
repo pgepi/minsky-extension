@@ -1,3 +1,9 @@
+## [1.0.6](https://github.com/pgepi/minsky-extension/compare/v1.0.5...v1.0.6) (2026-09-22)
+
+### 🔧 Maintenance
+
+* fix central Trivy workflow ([851ccca](https://github.com/pgepi/minsky-extension/commit/851cccaf63d64c9a881362855b5bf6d53bac1fad))
+
 ## [1.0.5](https://github.com/pgepi/minsky-extension/compare/v1.0.4...v1.0.5) (2026-09-22)
 
 ### 🔧 Maintenance
