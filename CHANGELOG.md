@@ -1,3 +1,9 @@
+## [1.0.8](https://github.com/pgepi/minsky-extension/compare/v1.0.7...v1.0.8) (2026-09-22)
+
+### 🔧 Maintenance
+
+* prefix GitHub Telegram notifications ([0df37d1](https://github.com/pgepi/minsky-extension/commit/0df37d1923a942fc4277d2d1151cede1b8bb6c2b))
+
 ## [1.0.7](https://github.com/pgepi/minsky-extension/compare/v1.0.6...v1.0.7) (2026-09-22)
 
 ### 🔧 Maintenance
