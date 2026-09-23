@@ -1,3 +1,9 @@
+## [1.0.9](https://github.com/pgepi/minsky-extension/compare/v1.0.8...v1.0.9) (2026-09-23)
+
+### 🔧 Maintenance
+
+* notify only Trivy findings ([8513bc1](https://github.com/pgepi/minsky-extension/commit/8513bc16d57883817729e508fe125421fe374ead))
+
 ## [1.0.8](https://github.com/pgepi/minsky-extension/compare/v1.0.7...v1.0.8) (2026-09-22)
 
 ### 🔧 Maintenance
